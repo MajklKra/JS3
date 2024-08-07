@@ -14,9 +14,35 @@ const current1Score = document.querySelector('#current--1');
 const player0Element = document.querySelector('.player--0');
 const player1Element = document.querySelector('.player--1');
 
-let currentScore = 0;
-let activePlayer = 0;
-let totalScore = [0, 0];
+let currentScore, activePlayer, totalScore;
+
+function init() {
+  btnRoll.disabled = false;
+  btnHold.disabled = false;
+  currentScore = 0;
+  activePlayer = 0;
+  totalScore = [0, 0];
+
+  score0Element.textContent = 0;
+  score1Element.textContent = 0;
+  current0Score.textContent = 0;
+  current1Score.textContent = 0;
+
+  diceElement.classList.add('hidden');
+  document.querySelector('.player--0').classList.remove('player--winner');
+  document.querySelector('.player--1').classList.remove('player--winner');
+  document.querySelector('.player--1').classList.remove('player--active');
+  document.querySelector('.player--0').classList.add('player--winner');
+
+  document.querySelector('#name--0').textContent = prompt(
+    'Zadej jmeno hrace 1: '
+  );
+  document.querySelector('#name--1').textContent = prompt(
+    'Zadej jmeno hrace 2: '
+  );
+}
+
+init();
 
 score0Element.textContent = 0;
 score1Element.textContent = 0;
@@ -34,7 +60,6 @@ btnRoll.addEventListener('click', function () {
   let diceNum = Math.floor(Math.random() * 6) + 1;
   diceElement.classList.remove('hidden');
   diceElement.src = `dice-${diceNum}.png`;
-
   if (diceNum !== 1) {
     currentScore += diceNum;
     document.querySelector(`#current--${activePlayer}`).textContent =
@@ -48,5 +73,19 @@ btnHold.addEventListener('click', function () {
   totalScore[`${activePlayer}`] += currentScore;
   document.querySelector(`#score--${activePlayer}`).textContent =
     totalScore[`${activePlayer}`];
-  switchPlayer();
+  if (totalScore[`${activePlayer}`] >= 100) {
+    document
+      .querySelector(`.player--${activePlayer}`)
+      .classList.add('player--winner');
+    document
+      .querySelector(`.player--${activePlayer}`)
+      .classList.remove('player--active');
+    diceElement.classList.add('hidden');
+    btnRoll.disabled = true;
+    btnHold.disabled = true;
+  } else {
+    switchPlayer();
+  }
 });
+
+btnNew.addEventListener('click', init);
